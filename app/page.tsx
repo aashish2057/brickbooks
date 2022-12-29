@@ -1,5 +1,8 @@
+"use client"
 import styles from './page.module.css'
 import SearchBar from './SearchBar'
+import React from 'react'
+import {useState} from 'react'
 
 const sets = [
   {id: "75336", setName: "ATAT"},
@@ -20,9 +23,24 @@ const sets = [
 ]
 
 export default function Home() {
+  const [results, setResults] = useState<{id: string; setName: string}[]>();
+
+  type changeHandler = React.ChangeEventHandler<HTMLInputElement>;
+
+  const handleChange: changeHandler = (event) => {
+    const {target} = event;
+    if(!target.value.trim()) return setResults([])
+
+    const filteredValue = sets.filter((set) =>
+      set.setName.toLowerCase().startsWith(target.value)
+    )
+    setResults(filteredValue)
+  }
+
+
   return (
     <div>
-      <SearchBar results={sets} renderItem={(item) => <p>{item.setName}</p>}/>
+      <SearchBar results={results} onChange={handleChange} renderItem={(item) => <p>{item.setName}</p>}/>
     </div>
   )
 }
